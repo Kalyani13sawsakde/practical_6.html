@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Parse XML Example - CD Catalog</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    table { border-collapse: collapse; width: 80%; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f4f4f4; }
+  </style>
+</head>
+<body>
+
+<h2>CD Catalog (Parsed from XML)</h2>
+<div id="catalog"></div>
+
+<script>
+// --- Example XML content (you can fetch this from a file instead) ---
+const xmlData = `
+<catalog>
+  <cd>
+    <title>Empire Burlesque</title>
+    <artist>Bob Dylan</artist>
+    <country>USA</country>
+    <company>Columbia</company>=
+    <price>10.90</price>
+    <year>1985</year>
+  </cd>
+  <cd>
+    <title>Hide your heart</title>
+    <artist>Bonnie Tyler</artist>
+    <country>UK</country>
+    <company>CBS Records</compa=ny>
+    <price>9.90</price>
+    <year>1988</year>
+  </cd>
+</catalog>
+`;
+
+// --- Parse XML string into a DOM object ---
+const parser = new DOMParser();
+const xmlDoc = parser.parseFromString(xmlData, "text/xml");
+
+// --- Extract all <cd> elements ---
+const cds = xmlDoc.getElementsByTagName("cd");
+
+let html = "<table><tr><th>Title</th><th>Artist</th><th>Country</th><th>Company</th><th>Price</th><th>Year</th></tr>";
+
+// --- Loop through each CD and extract data ---
+for (let i = 0; i < cds.length; i++) {
+  const title = cds[i].getElementsByTagName("title")[0].textContent;
+  const artist = cds[i].getElementsByTagName("artist")[0].textContent;
+  const country = cds[i].getElementsByTagName("country")[0].textContent;
+  const company = cds[i].getElementsByTagName("company")[0].textContent;
+  const price = cds[i].getElementsByTagName("price")[0].textContent;
+  const year = cds[i].getElementsByTagName("year")[0].textContent;
+  
+  html += `<tr>
+    <td>${title}</td>
+    <td>${artist}</td>
+    <td>${country}</td>
+    <td>${company}</td>
+    <td>${price}</td>
+    <td>${year}</td>
+  </tr>`;
+}
+
+html += "</table>";
+document.getElementById("catalog").innerHTML = html;
+
+/*
+If you want to load from an external cd_catalog.xml file instead:
+fetch('cd_catalog.xml')
+  .then(res => res.text())
+  .then(str => new window.DOMParser().parseFromString(str, "text/xml"))
+  .then(xml => {
+     // parse xml same way as above
+  });
+*/
+</script>
+
+</body>
+</html>
